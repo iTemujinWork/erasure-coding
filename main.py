@@ -1,3 +1,10 @@
+test_lvl = 1
+
+def test_print(text, lvl=1):
+    if __name__ == "__main__":
+        if lvl == 1 or test_lvl == 0:
+            print(text)
+
 def convert_to_bytes(data):
     return [ord(c) for c in data]
 
@@ -50,17 +57,102 @@ def make_parity(erause_data):
 
 
 
-def run(data):    
+def eruse_run(data):
+    test_print("erasure work...", 0)
+
+    test_print("convert to byte", 0)
     byte_data = convert_to_bytes(data)
 
+    test_print("erasure starting", 0)
     erasure_data = make_erasure(byte_data)
 
+    test_print("give a parity for erasure", 0)
     erasure_with_parity_data = make_parity(erasure_data)
 
+    test_print("[DONE] return to back", 0)
     return erasure_with_parity_data
   
 
+
+# -------------------------------------------------
+
+def check(data):
+    error = 0
+    for i in data:
+        if i is None:
+            error += 1
+
+    if error >= 2:
+        return 2
+    
+    return error
+
+
+def generate_back(data):
+    generate = data.pop(3)
+    for i in data:
+        if i is not None:
+            generate = XOR(i, generate)
+
+    return generate
+
+def generate_data_put(data, generate):
+    for i in range(len(data)):
+        if data[i] is None:
+            data[i] = generate
+            return data
+
+def put(data):
+    for i in range(3):
+        if data[i][-1] == 0:
+            test_print(data[i][-1], 0)
+            it = data[i].pop(-1)
+            test_print(it, 0)
+
+    test_print(data, 0)
+    return data[0] + data[1] + data[2]
+
+def eruse_back_run(data):
+    test_print("eruse back work...", 0)
+    error = check(data)
+    if error == 2:
+        return None
+
+    if data[3] != None and error == 1:
+        generate_data = generate_back(data)
+        data = generate_data_put(data, generate_data)
+
+    
+    share = put(data)
+
+    return decode_from_bytes(share)
+        
+
+        
+
+        
+
+
 if __name__ == "__main__":
-    print(run("Hello, world!"))
+    original = "Hello, World!"
+
+    response = eruse_run(original)
+    test_print(decode_from_bytes(response[3]), 0)
+    
+    test_print(response, 0)
+
+# ------------------------------------------------------------
+    
+    need = 4
+    for_test = response.copy()
+    for i in range(need):
+        for_test[i] = None
+        na = eruse_back_run(for_test)
+        if na == original:
+            print(f"[Nice] 4/{i+1}")
+        else:
+            print(f"[ERROR] 4/{i+1}", na, "<-->", original)
+
+        for_test = response.copy()
 
 
