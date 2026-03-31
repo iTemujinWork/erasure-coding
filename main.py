@@ -44,6 +44,7 @@ def complement(erause_data):
 def make_parity(erause_data):
     
     erause_plus_data = complement(erause_data)
+    test_print(erause_plus_data, 0)
     
 
     ep1 = XOR(erause_plus_data[0], erause_plus_data[1])
@@ -90,10 +91,22 @@ def check(data):
 
 def generate_back(data):
     generate = data.pop(3)
+    back = []
+    ide = 0
+    if data[0] is None:
+        ide = 1
+    how_mach = len(generate) - len(data[ide])
+    test_print(how_mach, 0)
+    for i in range(how_mach):
+        back.append(generate.pop(-1))
+
+    test_print(back, 0)
     for i in data:
         if i is not None:
             generate = XOR(i, generate)
-
+    
+    for i in range(len(back)):
+        generate.append(back[-1])
     return generate
 
 def generate_data_put(data, generate):
@@ -108,6 +121,7 @@ def put(data):
             test_print(data[i][-1], 0)
             it = data[i].pop(-1)
             test_print(it, 0)
+            test_print(data, 0)
 
     test_print(data, 0)
     return data[0] + data[1] + data[2]
@@ -144,15 +158,16 @@ if __name__ == "__main__":
 # ------------------------------------------------------------
     
     need = 4
-    for_test = response.copy()
     for i in range(need):
+        for_test = response.copy()
         for_test[i] = None
+        test_print(f'+_+_+_+_+_+_+_ {for_test}', 0)
         na = eruse_back_run(for_test)
         if na == original:
-            print(f"[Nice] 4/{i+1}")
+            test_print(f"+++ {for_test}", 0)
+            print(f"[Nice] 4/{i+1} ------------------------")
         else:
-            print(f"[ERROR] 4/{i+1}", na, "<-->", original)
-
-        for_test = response.copy()
+            test_print(f"---- {for_test}", 0)
+            print(f"[ERROR] 4/{i+1}", na, "<-->", original, "+++++++++++++++")
 
 
